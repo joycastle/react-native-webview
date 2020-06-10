@@ -288,7 +288,7 @@ class WebView extends React.Component<WebViewSharedProps, State> {
     UIManager.dispatchViewManagerCommand(
       this.getWebViewHandle(),
       UIManager.RNCWebView.Commands.setZoomScale,
-      [scale],
+      [scale, animated],
     );
   }
 
@@ -296,7 +296,7 @@ class WebView extends React.Component<WebViewSharedProps, State> {
     UIManager.dispatchViewManagerCommand(
       this.getWebViewHandle(),
       UIManager.RNCWebView.Commands.zoomToRect,
-      [rect, scale],
+      [rect, scale, animated],
     );
   }
 
