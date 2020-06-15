@@ -85,7 +85,11 @@ static NSDictionary* customCertificatesForHost;
     _savedStatusBarHidden = RCTSharedApplication().statusBarHidden;
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000 /* __IPHONE_11_0 */
-    _savedContentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+      if (@available(iOS 11.0, *)) {
+          _savedContentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+      } else {
+          // Fallback on earlier versions
+      }
 #endif
   }
 
@@ -165,6 +169,12 @@ static NSDictionary* customCertificatesForHost;
 
       WKUserScript *script = [[WKUserScript alloc] initWithSource:source injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES];
       [wkWebViewConfig.userContentController addUserScript:script];
+            
+      NSString* consoleSource = @"function captureInfo(msg) { window.webkit.messageHandlers.consoleInfoHandler.postMessage(msg); } window.console.info = captureInfo;";
+
+      WKUserScript *consoleScript = [[WKUserScript alloc] initWithSource:consoleSource injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:YES];
+      [wkWebViewConfig.userContentController addUserScript:consoleScript];
+      [wkWebViewConfig.userContentController addScriptMessageHandler:self name:@"consoleInfoHandler"];
     }
 
     wkWebViewConfig.allowsInlineMediaPlayback = _allowsInlineMediaPlayback;
@@ -392,7 +402,28 @@ static NSDictionary* customCertificatesForHost;
 {
   if (_onMessage != nil) {
     NSMutableDictionary<NSString *, id> *event = [self baseEvent];
-    [event addEntriesFromDictionary: @{@"data": message.body}];
+    if ([message.name isEqualToString:MessageHandlerName]) {
+        [event addEntriesFromDictionary: @{@"data": message.body}];
+    } else if([message.name isEqualToString: @"consoleInfoHandler"]) {
+        NSDictionary* consoleData = @{
+          @"type": @"WebAppConsoleMessage",
+          @"payload": @{ @"message": message.body }
+        };
+        
+        if ([NSJSONSerialization isValidJSONObject:consoleData]) {
+            NSError* error = nil;
+            NSData *jsonData = [NSJSONSerialization
+                                dataWithJSONObject:consoleData
+                                options:kNilOptions
+                                error:&error];
+            
+            if(!error) {
+                NSString* consoleData = [[NSString alloc] initWithData:jsonData encoding: NSUTF8StringEncoding];
+                [event addEntriesFromDictionary: @{@"data": consoleData}];
+            }
+        }
+    }
+
     _onMessage(event);
   }
 }
@@ -904,7 +935,7 @@ static NSDictionary* customCertificatesForHost;
         _onHttpError(event);
       }
     }
-  }  
+  }
 
   decisionHandler(WKNavigationResponsePolicyAllow);
 }
