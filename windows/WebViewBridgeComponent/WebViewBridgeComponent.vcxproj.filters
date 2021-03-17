@@ -11,23 +11,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="WebBridge.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="ReactPackageProvider.cpp" />
-    <ClCompile Include="WebViewManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="ReactPackageProvider.h" />
-    <ClInclude Include="WebViewManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReactNativeWebView.def" />
+    <None Include="WebViewBridgeComponent.def" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PropertySheet.props" />
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="ReactPackageProvider.idl" />
+    <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="WebBridge.idl" />
   </ItemGroup>
 </Project>
