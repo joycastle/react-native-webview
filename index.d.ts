@@ -1,12 +1,16 @@
 import { Component } from 'react';
 // eslint-disable-next-line
-import { IOSWebViewProps, AndroidWebViewProps, WebViewMessageEvent, WebViewNavigation, WebViewErrorEvent, WebViewNativeConfig } from './lib/WebViewTypes';
+import { IOSWebViewProps, AndroidWebViewProps } from './lib/WebViewTypes';
+
+export {
+    FileDownload, WebViewMessageEvent, WebViewNavigation,
+    WebViewErrorEvent, WebViewNativeConfig
+} from "./lib/WebViewTypes";
 
 export type WebViewProps = IOSWebViewProps & AndroidWebViewProps;
-export type WebViewErrorEvent = WebViewErrorEvent;
-export type WebViewMessageEvent = WebViewMessageEvent;
-export type WebViewNativeConfig = WebViewNativeConfig;
-declare class WebView extends Component<WebViewProps> {
+
+declare class WebView<P = {}> extends Component<WebViewProps & P> {
+    //>>>>>>> master
     /**
      * Go back one page in the webview's history.
      */
@@ -46,8 +50,31 @@ declare class WebView extends Component<WebViewProps> {
 
     setZoomScale: (scale: number, animated: boolean) => void;
 
-    zoomToRect: (rect: {x: number, y: number, width: number, height: number}, scale: number, animated: boolean) => void;
+    zoomToRect: (rect: { x: number, y: number, width: number, height: number }, scale: number, animated: boolean) => void;
+
+    /**
+    * Posts a message to WebView.
+    */
+    postMessage: (message: string) => void;
+
+    /**
+    * (Android only)
+    * Removes the autocomplete popup from the currently focused form field, if present.
+    */
+    clearFormData: () => void;
+
+    /**
+    * (Android only)
+    * Clears the resource cache. Note that the cache is per-application, so this will clear the cache for all WebViews used.
+    */
+    clearCache: (clear: boolean) => void;
+
+    /**
+    * (Android only)
+    * Tells this WebView to clear its internal back/forward list.
+    */
+    clearHistory: () => void;
 }
 
-export {WebView};
+export { WebView };
 export default WebView;
