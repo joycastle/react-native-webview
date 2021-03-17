@@ -503,8 +503,9 @@ static NSDictionary* customCertificatesForHost;
 
   } else if ([message.name isEqualToString:MessageHandlerName]) {
 
+    NSMutableDictionary<NSString *, id> *event = [self baseEvent];
+
     if (_onMessage) {
-      NSMutableDictionary<NSString *, id> *event = [self baseEvent];
       [event addEntriesFromDictionary: @{@"data": message.body}];
     } else if([message.name isEqualToString: @"consoleInfoHandler"]) {
         NSDictionary* consoleData = @{
