@@ -103,7 +103,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.facebook.react.bridge.UiThreadUtil.runOnUiThread;
@@ -1208,7 +1207,7 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
     }
 
     @Override
-    public boolean onConsoleMessage(ConsoleMessage message) {
+    public boolean onConsoleMessage(ConsoleMessage cm) {
       try {
         JSONObject cmJson = new JSONObject();
 
@@ -1721,7 +1720,8 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
         }
       }
     }
-    protecte  d void sendDirectMessage(final String method, WritableMap data) {
+
+    protected void sendDirectMessage(final String method, WritableMap data) {
       WritableNativeMap event = new WritableNativeMap();
       event.putMap("nativeEvent", data);
 
